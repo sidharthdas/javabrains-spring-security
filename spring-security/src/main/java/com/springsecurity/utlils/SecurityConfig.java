@@ -13,9 +13,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	
 	@Override
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception{
+		
 		auth.inMemoryAuthentication()
 			.withUser("sid")
 			.password("sid")
+			.roles("USER")
+			.and()
+			.withUser("admin")
+			.password("admin")
 			.roles("ADMIN");
 	}
 	
@@ -26,9 +31,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	
 	protected void configure(HttpSecurity http) throws Exception{
 		http.authorizeRequests()
-			.antMatchers("/**").hasRole("ADMIN")
+			.antMatchers("/admin").hasRole("ADMIN")
+			.antMatchers("/user").hasAnyRole("USER", "ADMIN")
+			.antMatchers("/").permitAll()
 			.and().formLogin();
 	}
-	
-	
 }
